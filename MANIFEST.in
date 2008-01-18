@@ -1,0 +1,4 @@
+include pysamplerate.py.in
+include MANIFEST.in
+include Changelog
+include site.cfg.example

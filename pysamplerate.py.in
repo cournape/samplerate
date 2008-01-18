@@ -1,0 +1,235 @@
+#! /usr/bin/env python
+# Last Change: Sat Jan 19 12:00 AM 2008 J
+
+# Copyright (C) 2006-2008 David Cournapeau <david@ar.media.kyoto-u.ac.jp>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+# TODO: - have options for correct samples in output, zero padding for input, etc...
+
+#================
+# Load libsndfile
+#================
+import ctypes
+from ctypes import cdll, Structure, c_float, c_double, c_int, c_long, pointer, POINTER, \
+        c_void_p, create_string_buffer, c_char_p, sizeof
+
+from numpy.ctypeslib import ndpointer, load_library
+ctypes_major    = int(ctypes.__version__.split('.')[0])
+if ctypes_major < 1:
+    msg =  "version of ctypes is %s, expected at least %s" \
+            % (ctypes.__version__, '1.0.1')
+    raise ImportError(msg)
+import numpy as N
+
+_src = cdll.LoadLibrary('%SHARED_LOCATION%')
+import info
+
+#=========================
+# Definition of constants
+#=========================
+# Convertors type
+%SRC_CONV%
+
+# convertors equivalence
+convertors_dic    = {
+        'sinc_best'         : _src_conv['SRC_SINC_BEST_QUALITY'],
+        'sinc_medium'       : _src_conv['SRC_SINC_MEDIUM_QUALITY'],
+        'sinc_fastest'      : _src_conv['SRC_SINC_FASTEST'],
+        'zero_order_hold'   : _src_conv['SRC_ZERO_ORDER_HOLD'],
+        'linear'            : _src_conv['SRC_LINEAR']
+}
+# functions args
+# TODO: is there a way to ensure that arg1 is the right kind of pointer ?
+arg1    = c_void_p
+arg2    = c_int
+arg3    = c_int
+_src.src_simple.argtypes  = [arg1, arg2, arg3]
+_src.src_simple.restype   = c_int
+
+arg1    = c_int
+_src.src_get_name.argtypes  = [arg1]
+_src.src_get_name.restype   = c_char_p
+
+arg1    = c_int
+_src.src_get_description.argtypes  = [arg1]
+_src.src_get_description.restype   = c_char_p
+
+# To pass when a C function needs a NULL arg
+_cNULL = POINTER(c_int)()
+
+#================
+# Python wrappers
+#================
+class PysamplerateException(Exception):
+    pass
+
+# class InvalidFormat(PyaudioException):
+#     pass
+# 
+class WrappingError(PysamplerateException):
+    def __str__(self):
+        return """There was an error when calling libsamplerate function , this is
+            a bug"""
+
+class SrcCallError(PysamplerateException):
+    def __str__(self):
+        return """There was an unknown error when calling libsamplerate function , 
+            this may be a bug"""
+
+class src_info(Structure):
+    _fields_    = [('data_in', POINTER(c_float)),
+            ('data_out', POINTER(c_float)), 
+            ('input_frames', c_long),
+            ('output_frames', c_long),
+            ('input_frames_used', c_long),
+            ('output_frames_gen', c_long),
+            ('end_of_input', c_int),
+            ('src_ratio', c_double)]
+    def __str__(self):
+        return "Converter of ratio %f" % self.src_ratio
+            
+class _converter_format_from_int:
+    def __init__(self, type):
+        """ """
+        self._type_int  = type
+        # Check that type is valid
+        is_valid    = False
+        for i in convertors_dic.values():
+            if type == i:
+                is_valid    = True
+                break
+        assert is_valid is True
+
+        # Now, we can get strings from SRC
+        self.name   = _src.src_get_name(type) 
+        if self.name < 0 or self.name == _cNULL:
+            raise SrcCallError()
+        self.descr  = _src.src_get_description(type) 
+        if self.descr < 0 or self.descr == _cNULL:
+            raise SrcCallError()
+
+    def __str__(self):
+        desc  = "Type of convertor: %s\n" % (self.name)
+        desc  += "Full Description : %s" % (self.descr)
+        return desc
+
+    def _get_type(self):
+        return self._type_int
+
+class converter_format(_converter_format_from_int):
+    def __init__(self, type = 'sinc_fastest'):
+        """ Create a converter instance to be used in the function
+        resample. 
+            Possible values for type are (in decreasing quality order):
+                - 'sinc_best'
+                - 'sinc_medium'
+                - 'sinc_fastest'
+                - 'linear'
+                - 'zero_order_hold'
+        """
+        try:
+            type_int    = convertors_dic[type]
+        except KeyError:
+            raise PysamplerateException("%s is not a valid convertor" % type)
+
+        _converter_format_from_int.__init__(self, type_int)
+
+def resample(input, r, convert = converter_format(), verbose = True):
+    """Resample the input array using the convertor convert, with
+    a ratio r (ie the resulting array will have a length 
+    ~ r * input's length.
+    
+    If input has rank 1, than all data are used. If rank is 2, 
+    the number columns will be assumed to be the number of channels.
+    """
+
+    if input.ndim > 2:
+        raise "rank > 2 not supported yet"
+    if input.ndim == 2:
+        nchannels   = input.shape[1]
+    else:
+        nchannels   = 1
+
+    nframes     = input.shape[0]
+
+    # TODO: check that this always work to get interleaved data....
+    if not (input.dtype == N.float32 or input.dtype == N.float64):
+        raise NotImplementedError("Input with type not float not supported yet")
+
+    input       = N.require(input, requirements = 'C', dtype = N.float32)
+    assert input.dtype == N.float32
+
+    len_output  = int(N.floor(r * nframes) + 1)
+    if input.ndim == 1:
+        output      = N.zeros((len_output), dtype = N.float32)
+    else:
+        output      = N.zeros((len_output, nchannels), dtype = N.float32)
+
+    # Fill in info for srcinfo
+    srcinfo = src_info()
+    srcinfo.data_in         = input.ctypes.data_as(POINTER(c_float))
+    srcinfo.data_out        = output.ctypes.data_as(POINTER(c_float))
+    srcinfo.input_frames    = c_int(nframes)
+    srcinfo.output_frames   = c_int(len_output)
+    srcinfo.src_ratio       = c_double(r)
+
+    # Call SRC
+    status  = _src.src_simple(pointer(srcinfo), convert._get_type(), nchannels)
+    if status is not 0:
+        raise RuntimeError('Error while calling wrapper, return status is %d (should be 0)' % status)
+
+    info    =  "samplerate info: "
+    info    +=  "\n\t%d frames used from input" % srcinfo.input_frames_used
+    info    += "\n\t%d frames written in output" % srcinfo.output_frames_gen
+    
+    if verbose:
+        if not(srcinfo.output_frames_gen == len_output):
+            info    += "\n\toutput has been resized from %d to %d" % \
+                        (len_output, srcinfo.output_frames_gen)
+        print info
+    
+    #return output[:srcinfo.output_frames_gen]
+    return output
+
+if __name__ == '__main__':
+    import pylab as P
+    fs  = 44100.
+    fr  = 48000
+    sins    = N.sin(2 * N.pi * 1000/fs * N.arange(0, fs * 2))
+    idsin   = N.sin(2 * N.pi * 1000/fr * N.arange(0, fr * 2))
+
+    conv1   = resample(sins, fr/fs, converter_format('zero_order_hold'))
+    conv2   = resample(sins, fr/fs)
+    conv3   = resample(sins, fr/fs, converter_format('sinc_best'))
+
+    err1    = conv1[fr:fr+2000].T - idsin[fr:fr+2000]
+    err2    = conv2[fr:fr+2000].T - idsin[fr:fr+2000]
+    err3    = conv3[fr:fr+2000].T - idsin[fr:fr+2000]
+
+    P.subplot(4, 1, 1)
+    P.plot(sins[fs:fs+2000])
+
+    P.subplot(4, 1, 2)
+    P.plot(err1)
+
+    P.subplot(4, 1, 3)
+    P.plot(err2)
+
+    P.subplot(4, 1, 4)
+    P.plot(err3)
+
+    print conv1.shape
+    P.show()

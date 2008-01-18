@@ -1,0 +1,9 @@
+pysamplerate (0.1.1) Thu, 02 Nov 2006 21:35:05 +0900
+
+	* Fix bug so that resample return a rank 1 array when a rank 
+	1 array is given
+	* various small fix
+
+pysamplerate (0.1) Thu, 02 Nov 2006 14:48:33 +0900
+
+	* First release

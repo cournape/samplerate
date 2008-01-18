@@ -1,0 +1,23 @@
+pysamplerate is a small wrapper of libsamplerate for 
+sampling rate convertion of audio data in python with numpy arrays
+
+# Requirements:
+
+To use/install this package, you need:
+    - a python interpreter with recent (>1.0.1 ctypes)
+    - a recent version of numpy (hyyp://www.scipy.org)
+    - Source Rabbit Code from Erik de Castro De Lopo (http://www.mega-nerd.com/SRC/)
+
+To install, a simple python setup.pu install should do it. If the Source Rabbit Code is 
+installed in non standart location, you may need a site.cfg file to add the location
+of the library + location (see numpy.distutils for details)
+
+# License:
+
+The license of pysamplerate is the same than SCIPY, a BSD-like license. Please
+beware that libsamplerate license is GPL, though.
+
+# Usage:
+
+Not much doc for now, but the API is straightforward, and all functions/classes
+that matter have pydocs. The main function is pysamplerate.resample
