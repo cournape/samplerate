@@ -23,11 +23,13 @@ MAINTAINER_EMAIL= 'david@ar.media.kyoto-u.ac.jp',
 URL             = 'http://ar.media.kyoto-u.ac.jp/members/david',
 LICENSE         = 'GPL'
 
-from info import _C_SRC_MAJ_VERSION as SAMPLERATE_MAJ_VERSION
+from scikits.samplerate.info import _C_SRC_MAJ_VERSION as SAMPLERATE_MAJ_VERSION
 
 # The following is more or less random copy/paste from numpy.distutils ...
+import setuptools
 from numpy.distutils.system_info import system_info, NotFoundError, dict_append
 from numpy.distutils.system_info import so_ext, get_info
+from numpy.distutils.core import setup
 
 class SamplerateNotFoundError(NotFoundError):
     """ samplerate (http://www.mega-nerd.com/SRC/) library not found.
@@ -92,6 +94,8 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
     if os.path.exists('MANIFEST'): os.remove('MANIFEST')
     if os.path.exists('pysamplerate.py'): os.remove('pysamplerate.py')
 
+    pkg_prefix_dir = os.path.join('scikits', 'samplerate')
+
     # Check that sndfile can be found and get necessary informations
     # (assume only one header and one library file)
     src_info    = samplerate_info()
@@ -104,10 +108,12 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
     from generate_const import generate_enum_dicts
     repdict = generate_enum_dicts(headername)
     repdict['%SHARED_LOCATION%'] = libname
-    do_subst_in_file('pysamplerate.py.in', 'pysamplerate.py', repdict)
+    do_subst_in_file(join(pkg_prefix_dir, 'pysamplerate.py.in'),
+                     join(pkg_prefix_dir, 'pysamplerate.py'), 
+                     repdict)
 
     # Get version
-    from info import version as pysamplerate_version
+    from scikits.samplerate.info import version as pysamplerate_version
 
     from numpy.distutils.misc_util import Configuration
     config = Configuration(package_name,parent_package,top_path,
@@ -123,5 +129,21 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
     return config
 
 if __name__ == "__main__":
-    from numpy.distutils.core import setup
-    setup(configuration=configuration)
+    setup(configuration = configuration,
+        install_requires = 'numpy', # can also add version specifiers      
+        namespace_packages = ['scikits'],
+        packages = setuptools.find_packages(),
+        include_package_data = True,
+        #package_data = {'scikits.audiolab': data_files}, 
+        test_suite = "tester", # for python setup.py test
+        zip_safe = True, # the package can run out of an .egg file
+        #FIXME url, download_url, ext_modules
+        classifiers = 
+            [ 'Development Status :: 4 - Beta',
+              'Environment :: Console',
+              'Intended Audience :: Developers',
+              'Intended Audience :: Science/Research',
+              'License :: OSI Approved :: GPL License',
+              'Topic :: Multimedia :: Sound/Audio',
+              'Topic :: Scientific/Engineering']
+    )

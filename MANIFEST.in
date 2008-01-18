@@ -1,4 +1,5 @@
-include pysamplerate.py.in
+include scikits/samplerate/pysamplerate.py.in
 include MANIFEST.in
 include Changelog
+include COPYING
 include site.cfg.example
