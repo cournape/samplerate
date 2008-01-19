@@ -1,0 +1,4 @@
+ - clean the code
+ - safer use of opaque pointer
+ - a real doc
+ - add API for per-block resampling
