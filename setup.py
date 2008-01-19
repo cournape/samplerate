@@ -1,14 +1,14 @@
 #! /usr/bin/env python
-# Last Change: Sat Jan 19 12:00 AM 2008 J
+# Last Change: Sat Jan 19 02:00 PM 2008 J
 # TODO:
 #   - check how to handle cmd line build options with distutils and use
 #   it in the building process
 
-""" pysamplerate is a small python package to resample audio data in numpy
-arrays to a difference sampling rate: it is basically a wrapper around the
-Secret Rabbit Code from Erik Castro De Lopo (http://www.mega-nerd.com/SRC/).
-This package only makes sense for audio data, and has high quality converters
-based on the work of J.O Smith from CCRMA (see
+"""samplerate is a small python package to resample audio data in numpy arrays
+to a difference sampling rate: it is basically a wrapper around the Secret
+Rabbit Code from Erik Castro De Lopo (http://www.mega-nerd.com/SRC/).  This
+package only makes sense for audio data, and has high quality converters based
+on the work of J.O Smith from CCRMA (see
 http://ccrma.stanford.edu/~jos/resample/optfir.pdf)
     
 LICENSE: the license of samplerate is the GPL, as is SRC itself."""
@@ -16,14 +16,14 @@ LICENSE: the license of samplerate is the GPL, as is SRC itself."""
 from os.path import join
 import os
 
-DISTNAME        = 'pysamplerate' 
+DISTNAME        = 'scikits.samplerate' 
 DESCRIPTION     = 'A python module to resample audio data at high quality'
 MAINTAINER      = 'David Cournapeau',
 MAINTAINER_EMAIL= 'david@ar.media.kyoto-u.ac.jp',
 URL             = 'http://ar.media.kyoto-u.ac.jp/members/david',
 LICENSE         = 'GPL'
 
-from scikits.samplerate.info import _C_SRC_MAJ_VERSION as SAMPLERATE_MAJ_VERSION
+SAMPLERATE_MAJ_VERSION = 0
 
 # The following is more or less random copy/paste from numpy.distutils ...
 import setuptools
@@ -32,9 +32,9 @@ from numpy.distutils.system_info import so_ext, get_info
 from numpy.distutils.core import setup
 
 class SamplerateNotFoundError(NotFoundError):
-    """ samplerate (http://www.mega-nerd.com/SRC/) library not found.
-    Directories to search for the libraries can be specified in the
-    site.cfg file (section [samplerate]).""" 
+    """samplerate (http://www.mega-nerd.com/SRC/) library not found.
+    Directories to search for the libraries can be specified in the site.cfg
+    file (section [samplerate]).""" 
     def __str__(self):
         return self.__doc__
 
@@ -113,11 +113,11 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
                      repdict)
 
     # Get version
-    from scikits.samplerate.info import version as pysamplerate_version
+    from scikits.samplerate.info import version as samplerate_version
 
     from numpy.distutils.misc_util import Configuration
     config = Configuration(package_name,parent_package,top_path,
-             version     = pysamplerate_version,
+             #version     = pysamplerate_version,
              maintainer  = MAINTAINER,
              maintainer_email = MAINTAINER_EMAIL,
              description = DESCRIPTION,
