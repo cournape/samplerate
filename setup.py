@@ -15,6 +15,7 @@ LICENSE: the license of samplerate is the GPL, as is SRC itself."""
 
 from os.path import join
 import os
+import sys
 
 DISTNAME        = 'scikits.samplerate' 
 DESCRIPTION     = 'A python module to resample audio data at high quality'
@@ -48,6 +49,14 @@ class samplerate_info(system_info):
     def __init__(self):
         system_info.__init__(self)
 
+    def get_module_ext(self):
+        if sys.platform == "win32":
+	    return ['.dll.']
+	elif sys.platform == "darwin":
+	    return ['.dylib']
+	else:
+	    return [so_ext]
+
     def calc_info(self):
         """ Compute the informations of the library """
         prefix  = 'lib'
@@ -73,13 +82,17 @@ class samplerate_info(system_info):
                 headername  = os.path.abspath(p[0])
                 break
         if inc_dir is not None:
-            if so_ext == '.dll':
+            mod_ext = self.get_module_ext()[0]
+            if mod_ext == '.dll':
                 # win32 case
                 fullname    = prefix + tmp['libraries'][0] + '-' + \
-                        str(SAMPLERATE_MAJ_VERSION) + so_ext
+                        str(SAMPLERATE_MAJ_VERSION) + mod_ext
+            elif mod_ext == ".dylib":
+                fullname    = prefix + tmp['libraries'][0] + \
+                        '.' + str(SAMPLERATE_MAJ_VERSION) + mod_ext
             else:
                 # All others ?
-                fullname    = prefix + tmp['libraries'][0] + so_ext + \
+                fullname    = prefix + tmp['libraries'][0] + mod_ext + \
                         '.' + str(SAMPLERATE_MAJ_VERSION) 
             fullname    = os.path.join(info['library_dirs'][0], fullname)
             dict_append(info, include_dirs=[inc_dir], 
