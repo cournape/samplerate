@@ -9,33 +9,32 @@ sinc interpolation. samplerate gives you functionalities similar to resample in
 matlab (the actual resampling method may differ, though), and is intended to be used
 with numpy arrays.
 
-.. include-literal: examples/example1.py
-
-The above figure plots the error signal for a 1000 Hz sinusoid converted
-from 44.1 Khz to 48 Khz (compare to an sinusoid directly sampled @ 48 khz). The
-script used to generate the figure is here:
-
-.. image:: examples/example1.png
-    :width: 500
-    :height: 400
-
 Download
 ========
 
 You can find samplerate in `tar.gz format <samplerate-0.1.tar.gz>`_
 or in `zip format <samplerate-0.1.zip>`_.
 
-.. _samplerate: http://www.ar.media.kyoto-u.ac.jp/members/david/archives/samplerate-0.1.tar.gz
 
 LICENSE
--------
+=======
 
 samplerate is released under the GPL license (the same as SRC).
 
 Usage
 =====
 
-Hopefully coming soon :)
+A simple example:
+
+.. literalinclude:: examples/example1.py
+
+.. htmlonly:: 
+        .. image:: examples/example1.png
+            :width: 500
+            :height: 400
+
+The  figure plots the error signal for a 1000 Hz sinusoid converted from 44.1
+Khz to 48 Khz (compare to an sinusoid directly sampled @ 48 khz).
 
 TODO:
 =====
