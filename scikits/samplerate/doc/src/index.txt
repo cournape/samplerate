@@ -29,7 +29,7 @@ A simple example:
 .. literalinclude:: examples/example1.py
 
 .. htmlonly:: 
-        .. image:: examples/example1.png
+   .. image:: examples/example1.png
             :width: 500
             :height: 400
 
