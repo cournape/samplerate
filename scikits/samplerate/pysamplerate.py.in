@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Last Change: Sat Jan 19 12:00 AM 2008 J
+# Last Change: Thu Nov 13 10:00 PM 2008 J
 
 # Copyright (C) 2006-2008 David Cournapeau <david@ar.media.kyoto-u.ac.jp>
 #
@@ -183,8 +183,8 @@ def resample(input, r, convert = converter_format(), verbose = True):
     srcinfo = src_info()
     srcinfo.data_in         = input.ctypes.data_as(POINTER(c_float))
     srcinfo.data_out        = output.ctypes.data_as(POINTER(c_float))
-    srcinfo.input_frames    = c_int(nframes)
-    srcinfo.output_frames   = c_int(len_output)
+    srcinfo.input_frames    = c_long(nframes)
+    srcinfo.output_frames   = c_long(len_output)
     srcinfo.src_ratio       = c_double(r)
 
     # Call SRC
