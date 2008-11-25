@@ -130,7 +130,7 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
 
     from numpy.distutils.misc_util import Configuration
     config = Configuration(package_name,parent_package,top_path,
-             #version     = pysamplerate_version,
+             version     = samplerate_version,
              maintainer  = MAINTAINER,
              maintainer_email = MAINTAINER_EMAIL,
              description = DESCRIPTION,
