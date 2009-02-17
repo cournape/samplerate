@@ -94,7 +94,6 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     zero_order_hold should be avoided as much as possible, and be used only
     when speed is critical.
     """
-    cdef cnp.ndarray[cnp.float32_t, ndim=2] ty
     cdef long osz, nframes
     cdef int nc, st
     cdef SRC_DATA sr
@@ -113,15 +112,11 @@ def resample(cnp.ndarray input, r, type, verbose=False):
 
     osz  = <long>(r * nframes - 1)
     input = np.require(input, requirements='C', dtype=np.float32)
-    ty = np.empty((osz, nc), dtype=np.float32, order='C')
 
-    sr.data_in = <float*>input.data
-    sr.data_out = <float*>ty.data
-    sr.input_frames = nframes
-    sr.output_frames = osz
-    sr.src_ratio = r
-
-    st = src_simple(&sr, _CONVERTOR_TYPE[type], nc)
+    if nc == 1:
+        st, ty = _resample_mono(input, nframes, osz, r, _CONVERTOR_TYPE[type])
+    else:
+        st, ty = _resample_stereo(input, nframes, osz, r, _CONVERTOR_TYPE[type], nc)
     if not st == 0:
         raise RuntimeError('Error while calling wrapper, return status is %d (should be 0)' % st)
 
@@ -136,3 +131,33 @@ def resample(cnp.ndarray input, r, type, verbose=False):
             print info
 
     return ty
+
+cdef _resample_mono(cnp.ndarray input, long niframes, long noframes, 
+        double r, int type):
+    cdef cnp.ndarray[cnp.float32_t, ndim=1] ty
+    cdef SRC_DATA sr
+
+    ty = np.empty(noframes, dtype=np.float32, order='C')
+
+    sr.data_in = <float*>input.data
+    sr.data_out = <float*>ty.data
+    sr.input_frames = niframes
+    sr.output_frames = noframes
+    sr.src_ratio = r
+
+    return src_simple(&sr, type, 1), ty
+
+cdef _resample_stereo(cnp.ndarray input, long niframes, long noframes,
+        double r, int type, int nc):
+    cdef cnp.ndarray[cnp.float32_t, ndim=2] ty
+    cdef SRC_DATA sr
+
+    ty = np.empty((noframes, nc), dtype=np.float32, order='C')
+
+    sr.data_in = <float*>input.data
+    sr.data_out = <float*>ty.data
+    sr.input_frames = niframes
+    sr.output_frames = noframes
+    sr.src_ratio = r
+
+    return src_simple(&sr, type, nc), ty
