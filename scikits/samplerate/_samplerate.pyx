@@ -108,9 +108,9 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     if not type in _CONVERTOR_TYPE.keys():
         raise ValueError("convert type %s unrecognized" % type)
 
-    osz  = <long>(r * nframes + 1)
+    osz  = <long>(r * nframes - 1)
     input = np.require(input, requirements='C', dtype=np.float32)
-    ty = np.empty((nframes, nc), dtype=np.float32, order='C')
+    ty = np.empty((osz, nc), dtype=np.float32, order='C')
 
     sr.data_in = <float*>input.data
     sr.data_out = <float*>ty.data
