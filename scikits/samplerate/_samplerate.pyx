@@ -7,6 +7,9 @@ cimport numpy as cnp
 cimport stdlib
 from samplerate cimport *
 
+cdef extern from *:
+    ctypedef char* const_char_ptr "const char*"
+
 cdef extern from "samplerate.h":
     cdef struct SRC_DATA:
         float * data_in
@@ -33,7 +36,7 @@ _CONVERTOR_TYPE = {
 def src_version_str():
     """Return version string of SRC."""
     cdef int st
-    cdef char* b
+    cdef const_char_ptr b
 
     b = src_get_version()
     return PyString_FromStringAndSize(b, stdlib.strlen(b))
@@ -51,7 +54,7 @@ def convertor_description(type):
     type: str
         resample type (see Note)
     """
-    cdef char* b
+    cdef const_char_ptr b
 
     if not type in _CONVERTOR_TYPE.keys():
         raise ValueError("convert type %s unrecognized" % type)
