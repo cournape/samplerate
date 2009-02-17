@@ -31,7 +31,8 @@ _CONVERTOR_TYPE = {
 }
 
 def resample(cnp.ndarray input, r, type, verbose=False):
-    """Resample the input array using the given converter type, with a ratio r
+    """\
+    Resample the input array using the given converter type, with a ratio r
     (ie the resulting array will have a length ~ r * input's length).
 
     Arguments
@@ -42,6 +43,11 @@ def resample(cnp.ndarray input, r, type, verbose=False):
         ratio
     type: str
         convert type
+
+    Return
+    ------
+    output: array
+        output data, whose size is approximately r * input.size
 
     Note
     ----
@@ -87,6 +93,6 @@ def resample(cnp.ndarray input, r, type, verbose=False):
         if not sr.output_frames_gen == osz:
             info    += "\n\toutput has been resized from %ld to %ld" % \
                         (osz, sr.output_frames_gen)
-        print info
+            print info
 
     return ty
