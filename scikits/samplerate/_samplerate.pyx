@@ -42,7 +42,7 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     r: float
         ratio
     type: str
-        convert type
+        resample type (see Note)
 
     Return
     ------
@@ -51,8 +51,18 @@ def resample(cnp.ndarray input, r, type, verbose=False):
 
     Note
     ----
-    If input has rank 1, than all data are used. If rank is 2,
-    the number columns will be assumed to be the number of channels.
+    If input has rank 1, than all data are used, and are assumed to be from a
+    mono signal. If rank is 2, the number columns will be assumed to be the
+    number of channels.
+
+    resample type are the following:
+        zero_order_hold: nearest neighbour
+        linear: linear interpolation
+        sinc_fastest/sinc_medium/sinc_fastest: since interpolation
+
+    Only sinc_*-based interpolation provide good quality; linear and
+    zero_order_hold should be avoided as much as possible, and be used only
+    when speed is critical.
     """
     cdef cnp.ndarray[cnp.float32_t, ndim=2] ty
     cdef long osz, nframes
