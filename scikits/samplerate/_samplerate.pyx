@@ -38,6 +38,27 @@ def src_version_str():
     b = src_get_version()
     return PyString_FromStringAndSize(b, stdlib.strlen(b))
 
+def available_convertors():
+    """Return the list of available convertor."""
+    return _CONVERTOR_TYPE.keys()
+
+def convertor_description(type):
+    """
+    Return a detailed description of the given convertor type.
+
+    Arguments
+    ---------
+    type: str
+        resample type (see Note)
+    """
+    cdef char* b
+
+    if not type in _CONVERTOR_TYPE.keys():
+        raise ValueError("convert type %s unrecognized" % type)
+
+    b = src_get_description(_CONVERTOR_TYPE[type])
+    return PyString_FromStringAndSize(b, stdlib.strlen(b))
+
 def resample(cnp.ndarray input, r, type, verbose=False):
     """\
     Resample the input array using the given converter type, with a ratio r
@@ -63,10 +84,8 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     mono signal. If rank is 2, the number columns will be assumed to be the
     number of channels.
 
-    resample type are the following:
-        zero_order_hold: nearest neighbour
-        linear: linear interpolation
-        sinc_fastest/sinc_medium/sinc_fastest: since interpolation
+    The list of convertor types is available from the function
+    available_convertors.
 
     Only sinc_*-based interpolation provide good quality; linear and
     zero_order_hold should be avoided as much as possible, and be used only
