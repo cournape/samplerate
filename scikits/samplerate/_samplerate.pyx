@@ -18,7 +18,7 @@ cdef extern from "samplerate.h":
         int end_of_input
         double src_ratio
     ctypedef SRC_DATA SRC_DATA
-    
+
 cdef extern from "Python.h":
     object PyString_FromStringAndSize(char *v, int len)
 
@@ -33,7 +33,7 @@ _CONVERTOR_TYPE = {
 def resample(cnp.ndarray input, r, type, verbose=False):
     """Resample the input array using the given converter type, with a ratio r
     (ie the resulting array will have a length ~ r * input's length).
-    
+
     Arguments
     ---------
     input: array
@@ -45,7 +45,7 @@ def resample(cnp.ndarray input, r, type, verbose=False):
 
     Note
     ----
-    If input has rank 1, than all data are used. If rank is 2, 
+    If input has rank 1, than all data are used. If rank is 2,
     the number columns will be assumed to be the number of channels.
     """
     cdef cnp.ndarray[cnp.float32_t, ndim=2] ty
@@ -61,7 +61,7 @@ def resample(cnp.ndarray input, r, type, verbose=False):
         nframes = input.size
     else:
         raise ValueError("rank > 2 not supported yet")
-        
+
     if not type in _CONVERTOR_TYPE.keys():
         raise ValueError("convert type %s unrecognized" % type)
 
@@ -82,11 +82,11 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     info =  "samplerate info: "
     info +=  "\n\t%d frames used from input" % sr.input_frames_used
     info += "\n\t%d frames written in output" % sr.output_frames_gen
-    
+
     if verbose:
         if not sr.output_frames_gen == osz:
             info    += "\n\toutput has been resized from %ld to %ld" % \
                         (osz, sr.output_frames_gen)
         print info
-    
+
     return ty
