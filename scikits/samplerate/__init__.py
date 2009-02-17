@@ -1,9 +1,10 @@
 #! /usr/bin/env python
-# Last Change: Thu Nov 02 03:00 PM 2006 J
+# Last Change: Tue Feb 17 03:00 PM 2009 J
 
 from info import __doc__
 
-from pysamplerate import resample, converter_format
+from _samplerate import resample, available_convertors, src_version_str, \
+    convertor_description
 
 __all__ = filter(lambda s:not s.startswith('_'),dir())
 
