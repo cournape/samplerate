@@ -32,13 +32,21 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
     write_version(os.path.join("scikits", "samplerate", "version.py"))
 
     from numpy.distutils.misc_util import Configuration
-    config = Configuration(package_name,parent_package,top_path,
+    config = Configuration(None,parent_package,top_path,
+             namespace_packages=['scikits'],
              version=VERSION,
              maintainer=MAINTAINER,
              maintainer_email=MAINTAINER_EMAIL,
              description=DESCRIPTION,
              url=URL,
              license=LICENSE)
+
+    config.set_options(
+            ignore_setup_xxx_py=True,
+            assume_default_configuration=True,
+            delegate_options_to_subpackages=True,
+            quiet=True,
+            )
 
     config.add_subpackage('scikits')
     config.add_data_files('scikits/__init__.py')
@@ -49,6 +57,7 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
 
 if __name__ == "__main__":
     setup(configuration = configuration,
+        name=DISTNAME,
         install_requires = 'numpy', # can also add version specifiers
         namespace_packages = ['scikits'],
         packages = setuptools.find_packages(),
