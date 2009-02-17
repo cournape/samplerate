@@ -1,4 +1,3 @@
-include scikits/samplerate/pysamplerate.py.in
 include MANIFEST.in
 include Changelog
 include COPYING
