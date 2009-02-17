@@ -30,6 +30,14 @@ _CONVERTOR_TYPE = {
         'linear'            : SRC_LINEAR
 }
 
+def src_version_str():
+    """Return version string of SRC."""
+    cdef int st
+    cdef char* b
+
+    b = src_get_version()
+    return PyString_FromStringAndSize(b, stdlib.strlen(b))
+
 def resample(cnp.ndarray input, r, type, verbose=False):
     """\
     Resample the input array using the given converter type, with a ratio r
