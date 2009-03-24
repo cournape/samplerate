@@ -1,53 +1,18 @@
 .. vim:syntax=rest
 
-===============================================================
- samplerate, a package for high quality samplerate convertion
-===============================================================
+############################################################
+Samplerate, a package for high quality samplerate convertion
+############################################################
 
-samplerate is a python module to do high quality resampling of audio signals, using
-sinc interpolation. samplerate gives you functionalities similar to resample in
-matlab (the actual resampling method may differ, though), and is intended to be used
-with numpy arrays.
+.. toctree::
 
-Download
-========
+        intro
+        installing
+        overview
+        fullapi
+        todo
 
-You can find samplerate in `tar.gz format <samplerate-0.1.tar.gz>`_
-or in `zip format <samplerate-0.1.zip>`_.
+.. htmlonly::
 
-
-LICENSE
-=======
-
-samplerate is released under the GPL license (the same as SRC).
-
-Usage
-=====
-
-A simple example:
-
-.. literalinclude:: examples/example1.py
-
-.. htmlonly:: 
-   .. image:: examples/example1.png
-            :width: 500
-            :height: 400
-
-The  figure plots the error signal for a 1000 Hz sinusoid converted from 44.1
-Khz to 48 Khz (compare to an sinusoid directly sampled @ 48 khz).
-
-TODO:
-=====
-
-For now, samplerate is very limited, and supports only constant ratio. But SRC
-itself is able to do ratio which change overtime. Also, no error reporting is
-done yet. It is usable as a matlab resample, though, which is why I started
-this in the first place.
-
-Acknowledgments
-===============
-
-Please note that samplerate is essentially a wrapper around the `Sampling Rate
-Conversion library <http://www.mega-nerd.com/SRC/>`_, aka Source Rabbit Code,
-the high quality sampling rate convertion library of Erik Castrop de Lopo. All
-the features of samplerate are his owns, all the bugs mine.
+        * :ref:`genindex`
+        * :ref:`search`
