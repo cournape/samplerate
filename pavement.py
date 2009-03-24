@@ -97,6 +97,7 @@ if paver.doctools.has_sphinx:
         return Bunch(locals())
 
     @task
+    @needs('build_version_files')
     def latex():
         """Build Audiolab's documentation and install it into
         scikits/samplerate/docs"""
@@ -119,7 +120,7 @@ if paver.doctools.has_sphinx:
         pass
 
     @task
-    @needs(['html_build'])
+    @needs('build_version_files', 'html_build')
     def html():
         """Build Audiolab's documentation and install it into
         scikits/samplerate/docs"""
@@ -140,7 +141,7 @@ if paver.doctools.has_sphinx:
         if os.path.exists(os.path.join("docs", "src")):
             write_version(os.path.join("docs", "src", "samplerate_version.py"))
     @task
-    @needs('build_version_files', 'setuptools.command.sdist')
+    @needs('setuptools.command.sdist')
     def sdist(options):
         """Build tarball."""
         pass
