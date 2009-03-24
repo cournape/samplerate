@@ -134,7 +134,13 @@ if paver.doctools.has_sphinx:
         pass
 
     @task
-    @needs('setuptools.command.sdist')
+    def build_version_files(options):
+        from common import write_version
+        write_version(os.path.join("scikits", "samplerate", "version.py"))
+        if os.path.exists(os.path.join("docs", "src")):
+            write_version(os.path.join("docs", "src", "samplerate_version.py"))
+    @task
+    @needs('build_version_files', 'setuptools.command.sdist')
     def sdist(options):
         """Build tarball."""
         pass
