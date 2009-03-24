@@ -2,12 +2,14 @@
 Introduction
 ============
 
-samplerate is a python module to do high quality resampling of audio signals,
-using sinc interpolation. samplerate gives you functionalities similar to
+Purpose of samplerate
+=====================
+
+Samplerate is a python module to do high quality resampling of audio signals,
+using sinc interpolation. Samplerate gives you functionalities similar to
 resample in matlab (the actual resampling method may differ, though), and is
 intended to be used with numpy arrays.
 
-===============
 Acknowledgments
 ===============
 
