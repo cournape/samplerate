@@ -4,6 +4,8 @@ Full API
 
 .. currentmodule:: scikits.samplerate
 
-.. autoclass:: converter_format
+.. autofunction:: available_convertors
+
+.. autofunction:: convertor_description
 
 .. autofunction:: resample
