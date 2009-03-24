@@ -49,10 +49,15 @@ def convertor_description(type):
     """
     Return a detailed description of the given convertor type.
 
-    Arguments
-    ---------
-    type: str
-        resample type (see Note)
+    Parameters
+    ----------
+    type : str
+        resample type (see Notes).
+
+    Returns
+    -------
+    descr : str
+        String describing the given convertor.
     """
     cdef const_char_ptr b
 
@@ -63,12 +68,12 @@ def convertor_description(type):
     return PyString_FromStringAndSize(b, stdlib.strlen(b))
 
 def resample(cnp.ndarray input, r, type, verbose=False):
-    """\
+    """
     Resample the input array using the given converter type, with a ratio r
     (ie the resulting array will have a length ~ r * input's length).
 
-    Arguments
-    ---------
+    Parameters
+    ----------
     input: array
         input data
     r: float
@@ -76,13 +81,13 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     type: str
         resample type (see Note)
 
-    Return
-    ------
+    Returns
+    -------
     output: array
         output data, whose size is approximately r * input.size
 
-    Note
-    ----
+    Notes
+    -----
     If input has rank 1, than all data are used, and are assumed to be from a
     mono signal. If rank is 2, the number columns will be assumed to be the
     number of channels.
