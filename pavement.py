@@ -9,27 +9,29 @@ import setuptools
 import distutils
 import numpy.distutils
 
+try:
+    from paver.tasks import VERSION as _PVER
+    if not _PVER >= '1.0':
+        raise RuntimeError("paver version >= 1.0 required (was %s)" % _PVER)
+except ImportError, e:
+    raise RuntimeError("paver version >= 1.0 required")
+
 import paver
 import paver.doctools
+import paver.path
+from paver.easy import options, Bunch, task, needs, dry
+from paver.setuputils import setup
 
 import common
-from setup import configuration
 
-options(
-        setup=Bunch(
-            name=common.DISTNAME,
-            namespace_packages=['scikits'],
-            packages=setuptools.find_packages(),
-            install_requires=common.INSTALL_REQUIRE,
-            version=common.VERSION,
-            include_package_data=True,
-            ),
-        sphinx=Bunch(
-            builddir="build",
-            sourcedir="src"
-            ),
+setup(name=common.DISTNAME,
+        namespace_packages=['scikits'],
+        packages=setuptools.find_packages(),
+        install_requires=common.INSTALL_REQUIRE,
+        version=common.VERSION,
+        include_package_data=True)
 
-        )
+options(sphinx=Bunch(builddir="build", sourcedir="src"))
 
 def macosx_version():
     st = subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE)
@@ -49,25 +51,25 @@ def mpkg_name():
 @task
 #@needs(['latex', 'html'])
 def dmg():
-    builddir = path("build") / "dmg"
+    builddir = paver.path.path("build") / "dmg"
     builddir.rmtree()
     builddir.mkdir()
 
     # Copy mpkg into image source
     mpkg_n = mpkg_name()
-    mpkg = path("dist") / mpkg_n
+    mpkg = paver.path.path("dist") / mpkg_n
     mpkg.copytree(builddir / mpkg_n)
 
     # Copy docs into image source
-    doc_root = path(builddir) / "docs"
-    html_docs = path("docs") / "html"
-    pdf_docs = path("docs") / "pdf" / "samplerate.pdf"
+    doc_root = paver.path.path(builddir) / "docs"
+    html_docs = paver.path.path("docs") / "html"
+    pdf_docs = paver.path.path("docs") / "pdf" / "samplerate.pdf"
     html_docs.copytree(doc_root / "html")
     pdf_docs.copy(doc_root / "samplerate.pdf")
 
     # Build the dmg
     image_name = "samplerate-%s.dmg" % common.build_fverstring()
-    image = path(image_name)
+    image = paver.path.path(image_name)
     image.remove()
     cmd = ["hdiutil", "create", image_name, "-srcdir", str(builddir)]
     subprocess.Popen(cmd)
@@ -80,7 +82,7 @@ if paver.doctools.has_sphinx:
     def _latex_paths():
         """look up the options that determine where all of the files are."""
         opts = options
-        docroot = path(opts.get('docroot', 'docs'))
+        docroot = paver.path.path(opts.get('docroot', 'docs'))
         if not docroot.exists():
             raise BuildFailure("Sphinx documentation root (%s) does not exist."
                     % docroot)
@@ -104,7 +106,7 @@ if paver.doctools.has_sphinx:
         def build_latex():
             subprocess.call(["make", "all-pdf"], cwd=paths.latexdir)
         dry("Build pdf doc", build_latex)
-        destdir = path("docs") / "pdf"
+        destdir = paver.path.path("docs") / "pdf"
         destdir.rmtree()
         destdir.makedirs()
         pdf = paths.latexdir / "samplerate.pdf"
@@ -121,8 +123,8 @@ if paver.doctools.has_sphinx:
     def html():
         """Build Audiolab's documentation and install it into
         scikits/samplerate/docs"""
-        builtdocs = path("docs") / options.sphinx.builddir / "html"
-        destdir = path("docs") / "html"
+        builtdocs = paver.path.path("docs") / options.sphinx.builddir / "html"
+        destdir = paver.path.path("docs") / "html"
         destdir.rmtree()
         builtdocs.move(destdir)
 
@@ -132,13 +134,13 @@ if paver.doctools.has_sphinx:
         pass
 
     @task
-    @needs(['setuptools.command.sdist'])
-    def sdist():
+    @needs('setuptools.command.sdist')
+    def sdist(options):
         """Build tarball."""
         pass
 
     @task
-    @needs(['doc', 'sdist'])
-    def release_sdist():
+    @needs('doc', 'paver.sdist')
+    def release_sdist(options):
         """Build doc + tarball."""
         pass
