@@ -34,7 +34,9 @@ _CONVERTOR_TYPE = {
 }
 
 def src_version_str():
-    """Return version string of SRC."""
+    """
+    Return version string of SRC.
+    """
     cdef int st
     cdef const_char_ptr b
 
@@ -42,7 +44,9 @@ def src_version_str():
     return PyString_FromStringAndSize(b, stdlib.strlen(b))
 
 def available_convertors():
-    """Return the list of available convertor."""
+    """
+    Return the list of available convertor.
+    """
     return _CONVERTOR_TYPE.keys()
 
 def convertor_description(type):
