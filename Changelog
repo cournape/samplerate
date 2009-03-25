@@ -1,3 +1,7 @@
+Thu, 26 Mar 2009 02:07:35 +0900
+	* Use cython instead of ctypes
+	* Use paver for easy packaging
+
 Tue, 25 Nov 2008 17:05:23 +0900
 	* Doc is now buildable with sphinx
 	* release 0.2
