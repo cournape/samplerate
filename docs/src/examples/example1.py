@@ -1,6 +1,6 @@
 import numpy as np
 import pylab as plt
-from scikits.resample import converter_format, resample
+from scikits.samplerate import resample
 
 fs  = 44100.
 fr  = 48000.
@@ -9,11 +9,11 @@ sins    = np.sin(2 * np.pi * 1000/fs * np.arange(0, fs * 2))
 # Ideal resampled signal
 idsin   = np.sin(2 * np.pi * 1000/fr * np.arange(0, fr * 2))
 
-conv1   = resample(sins, fr/fs, converter_format('linear'))
-conv3   = resample(sins, fr/fs, converter_format('sinc_best'))
+conv1   = resample(sins, fr/fs, 'linear')
+conv3   = resample(sins, fr/fs, 'sinc_best')
 
-err1    = conv1[fr:fr+2000].T - idsin[fr:fr+2000]
-err3    = conv3[fr:fr+2000].T - idsin[fr:fr+2000]
+err1    = conv1[fr:fr+2000] - idsin[fr:fr+2000]
+err3    = conv3[fr:fr+2000] - idsin[fr:fr+2000]
 
 plt.subplot(3, 1, 1)
 plt.plot(idsin[fs:fs+2000])
