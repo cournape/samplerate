@@ -67,8 +67,9 @@ def test_install():
     sh('%s setup.py install' % VPYEXEC)
 
 @task
-#@needs(['latex', 'html'])
+@needs("setuptools.bdist_mpkg", "doc")
 def dmg():
+    pyver = ".".join([str(i) for i in sys.version_info[:2]])
     builddir = paver.path.path("build") / "dmg"
     builddir.rmtree()
     builddir.mkdir()
@@ -77,6 +78,8 @@ def dmg():
     mpkg_n = mpkg_name()
     mpkg = paver.path.path("dist") / mpkg_n
     mpkg.copytree(builddir / mpkg_n)
+    tmpkg = builddir / mpkg_n
+    tmpkg.rename(builddir / ("samplerate-%s-py%s.mpkg" % (common.build_fverstring(), pyver)))
 
     # Copy docs into image source
     doc_root = paver.path.path(builddir) / "docs"
