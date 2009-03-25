@@ -19,7 +19,7 @@ except ImportError, e:
 import paver
 import paver.doctools
 import paver.path
-from paver.easy import options, Bunch, task, needs, dry
+from paver.easy import options, Bunch, task, needs, dry, sh
 from paver.setuputils import setup
 
 import common
@@ -31,7 +31,8 @@ setup(name=common.DISTNAME,
         version=common.VERSION,
         include_package_data=True)
 
-options(sphinx=Bunch(builddir="build", sourcedir="src"))
+options(sphinx=Bunch(builddir="build", sourcedir="src"),
+        virtualenv=Bunch(script_name="install/bootstrap.py"))
 
 def macosx_version():
     st = subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE)
@@ -48,6 +49,23 @@ def mpkg_name():
     pyver = ".".join([str(i) for i in sys.version_info[:2]])
     return "scikits.samplerate-%s-py%s-macosx%s.%s.mpkg" % (common.build_fverstring(),
                             pyver, maj, min)
+
+VPYEXEC = "install/bin/python"
+
+@task
+@needs('paver.virtual.bootstrap')
+def bootstrap():
+    """create virtualenv in ./install"""
+    # XXX: fix the mkdir
+    sh('mkdir -p install')
+    sh('cd install; %s bootstrap.py' % sys.executable)
+
+@task
+@needs('bootstrap')
+def test_install():
+    """Install the package into the venv."""
+    sh('%s setup.py install' % VPYEXEC)
+
 @task
 #@needs(['latex', 'html'])
 def dmg():
