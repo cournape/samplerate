@@ -1,11 +1,11 @@
-samplerate is a small wrapper of libsamplerate for sampling rate convertion of
-audio data in python with numpy arrays
+samplerate is a small wrapper around libsamplerate (SRC aka Source Rabbit Code)
+for high quality sampling rate convertion from audio data in numpy arrays
 
 # Requirements:
 
 To use/install this package, you need:
-    - a python interpreter with recent (1.0.1 or above) ctypes
-    - a recent version of numpy (hyyp://www.scipy.org)
+    - a python interpreter
+    - a recent version of numpy (>=1.2) (http://www.scipy.org)
     - Source Rabbit Code from Erik de Castro De Lopo
       (http://www.mega-nerd.com/SRC/)
 
@@ -19,5 +19,4 @@ The license of samplerate is GPL, as libsamplerate.
 
 # Usage:
 
-Not much doc for now, but the API is straightforward, and all functions/classes
-that matter have pydocs. The main function is samplerate.resample
+See included documentation
