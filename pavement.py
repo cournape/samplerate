@@ -93,7 +93,7 @@ def dmg():
     image = paver.path.path(image_name)
     image.remove()
     cmd = ["hdiutil", "create", image_name, "-srcdir", str(builddir)]
-    subprocess.Popen(cmd)
+    sh(" ".join(cmd))
 #options.setup.package_data =
 #    setuputils.find_package_data("scikits/samplerate",
 #                                 package="scikits/samplerate",
