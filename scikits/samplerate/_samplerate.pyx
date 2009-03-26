@@ -103,9 +103,8 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     zero_order_hold should be avoided as much as possible, and be used only
     when speed is critical.
     """
-    cdef long osz, nframes
+    cdef long osz, nframes, input_frames_used, output_frames_gen
     cdef int nc, st
-    cdef SRC_DATA sr
 
     if input.ndim == 2:
         nframes = input.shape[0]
@@ -123,20 +122,22 @@ def resample(cnp.ndarray input, r, type, verbose=False):
     input = np.require(input, requirements='C', dtype=np.float32)
 
     if nc == 1:
-        st, ty = _resample_mono(input, nframes, osz, r, _CONVERTOR_TYPE[type])
+        st, ty, input_frames_used, output_frames_gen \
+                = _resample_mono(input, nframes, osz, r, _CONVERTOR_TYPE[type])
     else:
-        st, ty = _resample_stereo(input, nframes, osz, r, _CONVERTOR_TYPE[type], nc)
+        st, ty, input_frames_used, output_frames_gen \
+                = _resample_stereo(input, nframes, osz, r, _CONVERTOR_TYPE[type], nc)
     if not st == 0:
         raise RuntimeError('Error while calling wrapper, return status is %d (should be 0)' % st)
 
-    info =  "samplerate info: "
-    info +=  "\n\t%d frames used from input" % sr.input_frames_used
-    info += "\n\t%d frames written in output" % sr.output_frames_gen
-
     if verbose:
-        if not sr.output_frames_gen == osz:
-            info    += "\n\toutput has been resized from %ld to %ld" % \
-                        (osz, sr.output_frames_gen)
+        info =  "samplerate info: "
+        info +=  "\n\t%d frames used from input" % input_frames_used
+        info += "\n\t%d frames written in output" % output_frames_gen
+
+        if not output_frames_gen == osz:
+            info += "\n\toutput has been resized from %ld to %ld" % \
+                    (osz, output_frames_gen)
             print info
 
     return ty
@@ -154,7 +155,7 @@ cdef _resample_mono(cnp.ndarray input, long niframes, long noframes,
     sr.output_frames = noframes
     sr.src_ratio = r
 
-    return src_simple(&sr, type, 1), ty
+    return src_simple(&sr, type, 1), ty, sr.input_frames_used, sr.output_frames_gen
 
 cdef _resample_stereo(cnp.ndarray input, long niframes, long noframes,
         double r, int type, int nc):
@@ -169,4 +170,4 @@ cdef _resample_stereo(cnp.ndarray input, long niframes, long noframes,
     sr.output_frames = noframes
     sr.src_ratio = r
 
-    return src_simple(&sr, type, nc), ty
+    return src_simple(&sr, type, 1), ty, sr.input_frames_used, sr.output_frames_gen
