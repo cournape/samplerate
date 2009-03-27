@@ -126,6 +126,11 @@ if paver.doctools.has_sphinx:
         paths = _latex_paths()
         sphinxopts = ['', '-b', 'latex', paths.srcdir, paths.latexdir]
         dry("sphinx-build %s" % (" ".join(sphinxopts),), sphinx.main, sphinxopts)
+
+    @task
+    @needs('latex')
+    def pdf():
+        paths = _latex_paths()
         def build_latex():
             subprocess.call(["make", "all-pdf"], cwd=paths.latexdir)
         dry("Build pdf doc", build_latex)
@@ -145,7 +150,7 @@ if paver.doctools.has_sphinx:
         builtdocs.copytree(destdir)
 
     @task
-    @needs(['html', 'latex'])
+    @needs(['html', 'pdf'])
     def doc():
         pass
 
@@ -156,7 +161,7 @@ if paver.doctools.has_sphinx:
         if os.path.exists(os.path.join("docs", "src")):
             write_version(os.path.join("docs", "src", "samplerate_version.py"))
     @task
-    @needs('html', 'setuptools.command.sdist')
+    @needs('html', 'pdf', 'setuptools.command.sdist')
     def sdist(options):
         """Build tarball."""
         pass
