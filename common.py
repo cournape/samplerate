@@ -47,5 +47,16 @@ def write_version(fname):
     f.writelines("version = '%s'\n" % build_fverstring())
     f.close()
 
+def write_info(fname):
+    f = open(fname, "w")
+    f.writelines("# THIS FILE IS GENERATED FROM THE SETUP.PY. DO NOT EDIT.\n")
+    f.writelines('"""%s"""' % descr)
+    f.writelines("""
+# version of the python module (compatibility -> use
+# scikits.samplerate.version.version instead, to be consistent with numpy)
+from version import short_version as version
+ignore  = False""")
+    f.close()
+
 VERSION = build_fverstring()
 INSTALL_REQUIRE = 'numpy'

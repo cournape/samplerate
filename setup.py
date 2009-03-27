@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Last Change: Tue Mar 24 11:00 PM 2009 J
+# Last Change: Fri Mar 27 03:00 PM 2009 J
 # TODO:
 #   - check how to handle cmd line build options with distutils and use
 #   it in the building process
@@ -32,6 +32,7 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
     write_version(os.path.join("scikits", "samplerate", "version.py"))
     if os.path.exists(os.path.join("docs", "src")):
         write_version(os.path.join("docs", "src", "samplerate_version.py"))
+    write_info(os.path.join("scikits", "samplerate", "info.py"))
 
     from numpy.distutils.misc_util import Configuration
     config = Configuration(None,parent_package,top_path,
