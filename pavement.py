@@ -133,7 +133,7 @@ if paver.doctools.has_sphinx:
         destdir.rmtree()
         destdir.makedirs()
         pdf = paths.latexdir / "samplerate.pdf"
-        pdf.move(destdir)
+        pdf.copy(destdir)
 
     @task
     @needs(['paver.doctools.html'])
@@ -162,13 +162,7 @@ if paver.doctools.has_sphinx:
         if os.path.exists(os.path.join("docs", "src")):
             write_version(os.path.join("docs", "src", "samplerate_version.py"))
     @task
-    @needs('setuptools.command.sdist')
+    @needs('html', 'setuptools.command.sdist')
     def sdist(options):
         """Build tarball."""
-        pass
-
-    @task
-    @needs('doc', 'paver.sdist')
-    def release_sdist(options):
-        """Build doc + tarball."""
         pass
