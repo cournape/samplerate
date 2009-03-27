@@ -19,10 +19,13 @@ except ImportError, e:
 import paver
 import paver.doctools
 import paver.path
-from paver.easy import options, Bunch, task, needs, dry, sh
+from paver.easy import options, Bunch, task, needs, dry, sh, call_task
 from paver.setuputils import setup
 
 import common
+
+PDF_DESTDIR = paver.path.path('docs') / 'pdf'
+HTML_DESTDIR = paver.path.path('docs') / 'html'
 
 setup(name=common.DISTNAME,
         namespace_packages=['scikits'],
@@ -53,11 +56,12 @@ def mpkg_name():
 VPYEXEC = "install/bin/python"
 
 @task
-@needs('paver.virtual.bootstrap')
 def bootstrap():
     """create virtualenv in ./install"""
-    # XXX: fix the mkdir
-    sh('mkdir -p install')
+    install = paver.path.path('install')
+    if not install.exists():
+        install.mkdir()
+    call_task('paver.virtual.bootstrap')
     sh('cd install; %s bootstrap.py' % sys.executable)
 
 @task
@@ -65,6 +69,20 @@ def bootstrap():
 def test_install():
     """Install the package into the venv."""
     sh('%s setup.py install' % VPYEXEC)
+
+@task
+def clean():
+    """Remove build, dist, egg-info garbage."""
+    d = ['build', 'dist', 'scikits.samplerate.egg-info', HTML_DESTDIR,
+            PDF_DESTDIR]
+    for i in d:
+        paver.path.path(i).rmtree()
+
+    (paver.path.path('docs') / options.sphinx.builddir).rmtree()
+
+@task
+def clean_bootstrap():
+    paver.path.path('install').rmtree()
 
 @task
 @needs("setuptools.bdist_mpkg", "doc")
@@ -120,38 +138,34 @@ if paver.doctools.has_sphinx:
     @task
     @needs('build_version_files')
     def latex():
-        """Build Audiolab's documentation and install it into
+        """Build samplerate's documentation and install it into
         scikits/samplerate/docs"""
         paths = _latex_paths()
         sphinxopts = ['', '-b', 'latex', paths.srcdir, paths.latexdir]
         dry("sphinx-build %s" % (" ".join(sphinxopts),), sphinx.main, sphinxopts)
+
+    @task
+    @needs('latex')
+    def pdf():
+        paths = _latex_paths()
         def build_latex():
             subprocess.call(["make", "all-pdf"], cwd=paths.latexdir)
         dry("Build pdf doc", build_latex)
-        destdir = paver.path.path("docs") / "pdf"
-        destdir.rmtree()
-        destdir.makedirs()
+        PDF_DESTDIR.rmtree()
+        PDF_DESTDIR.makedirs()
         pdf = paths.latexdir / "samplerate.pdf"
-        pdf.move(destdir)
+        pdf.copy(PDF_DESTDIR)
 
     @task
-    @needs(['paver.doctools.html'])
-    def html_build():
-        """Build Audiolab's html documentation."""
-        pass
-
-    @task
-    @needs('build_version_files', 'html_build')
+    @needs('build_version_files', 'paver.doctools.html')
     def html():
-        """Build Audiolab's documentation and install it into
-        scikits/samplerate/docs"""
+        """Build samplerate documentation and install it into docs"""
         builtdocs = paver.path.path("docs") / options.sphinx.builddir / "html"
-        destdir = paver.path.path("docs") / "html"
-        destdir.rmtree()
-        builtdocs.move(destdir)
+        HTML_DESTDIR.rmtree()
+        builtdocs.copytree(HTML_DESTDIR)
 
     @task
-    @needs(['html', 'latex'])
+    @needs(['html', 'pdf'])
     def doc():
         pass
 
@@ -162,13 +176,7 @@ if paver.doctools.has_sphinx:
         if os.path.exists(os.path.join("docs", "src")):
             write_version(os.path.join("docs", "src", "samplerate_version.py"))
     @task
-    @needs('setuptools.command.sdist')
+    @needs('html', 'pdf', 'setuptools.command.sdist')
     def sdist(options):
         """Build tarball."""
-        pass
-
-    @task
-    @needs('doc', 'paver.sdist')
-    def release_sdist(options):
-        """Build doc + tarball."""
         pass
