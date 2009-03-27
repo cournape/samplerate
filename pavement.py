@@ -136,12 +136,6 @@ if paver.doctools.has_sphinx:
         pdf.copy(destdir)
 
     @task
-    @needs(['paver.doctools.html'])
-    def html_build():
-        """Build samplerate's html documentation."""
-        pass
-
-    @task
     @needs('build_version_files', 'paver.doctools.html')
     def html():
         """Build samplerate documentation and install it into docs"""
