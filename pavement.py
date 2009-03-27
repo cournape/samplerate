@@ -24,6 +24,9 @@ from paver.setuputils import setup
 
 import common
 
+PDF_DESTDIR = paver.path.path('docs') / 'pdf'
+HTML_DESTDIR = paver.path.path('docs') / 'html'
+
 setup(name=common.DISTNAME,
         namespace_packages=['scikits'],
         packages=setuptools.find_packages(),
@@ -66,6 +69,20 @@ def bootstrap():
 def test_install():
     """Install the package into the venv."""
     sh('%s setup.py install' % VPYEXEC)
+
+@task
+def clean():
+    """Remove build, dist, egg-info garbage."""
+    d = ['build', 'dist', 'scikits.samplerate.egg-info', HTML_DESTDIR,
+            PDF_DESTDIR]
+    for i in d:
+        paver.path.path(i).rmtree()
+
+    (paver.path.path('docs') / options.sphinx.builddir).rmtree()
+
+@task
+def clean_bootstrap():
+    paver.path.path('install').rmtree()
 
 @task
 @needs("setuptools.bdist_mpkg", "doc")
@@ -134,20 +151,18 @@ if paver.doctools.has_sphinx:
         def build_latex():
             subprocess.call(["make", "all-pdf"], cwd=paths.latexdir)
         dry("Build pdf doc", build_latex)
-        destdir = paver.path.path("docs") / "pdf"
-        destdir.rmtree()
-        destdir.makedirs()
+        PDF_DESTDIR.rmtree()
+        PDF_DESTDIR.makedirs()
         pdf = paths.latexdir / "samplerate.pdf"
-        pdf.copy(destdir)
+        pdf.copy(PDF_DESTDIR)
 
     @task
     @needs('build_version_files', 'paver.doctools.html')
     def html():
         """Build samplerate documentation and install it into docs"""
         builtdocs = paver.path.path("docs") / options.sphinx.builddir / "html"
-        destdir = paver.path.path("docs") / "html"
-        destdir.rmtree()
-        builtdocs.copytree(destdir)
+        HTML_DESTDIR.rmtree()
+        builtdocs.copytree(HTML_DESTDIR)
 
     @task
     @needs(['html', 'pdf'])
