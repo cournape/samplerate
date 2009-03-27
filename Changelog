@@ -1,3 +1,7 @@
+Fri, 27 Mar 2009 16:05:40 +0900
+	* Make sure info.py version is the same as the version module
+	* Various paver goodies to make release less painless
+
 Thu, 26 Mar 2009 02:07:35 +0900
 	* Use cython instead of ctypes
 	* Use paver for easy packaging
