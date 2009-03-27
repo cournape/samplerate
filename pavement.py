@@ -142,14 +142,13 @@ if paver.doctools.has_sphinx:
         pass
 
     @task
-    @needs('build_version_files', 'html_build')
+    @needs('build_version_files', 'paver.doctools.html')
     def html():
-        """Build Audiolab's documentation and install it into
-        scikits/samplerate/docs"""
+        """Build samplerate documentation and install it into docs"""
         builtdocs = paver.path.path("docs") / options.sphinx.builddir / "html"
         destdir = paver.path.path("docs") / "html"
         destdir.rmtree()
-        builtdocs.move(destdir)
+        builtdocs.copytree(destdir)
 
     @task
     @needs(['html', 'latex'])
