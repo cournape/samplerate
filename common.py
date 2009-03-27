@@ -15,7 +15,7 @@ MAINTAINER          = 'David Cournapeau'
 MAINTAINER_EMAIL    = 'david@ar.media.kyoto-u.ac.jp'
 URL                 = 'http://www.ar.media.kyoto-u.ac.jp/members/david/softwares/samplerate'
 LICENSE             = 'GPL'
-DOWNLOAD_URL        = URL
+DOWNLOAD_URL        = 'http://pypi.python.org/pypi/scikits.samplerate'
 
 MAJOR = 0
 MINOR = 4

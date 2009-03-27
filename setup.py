@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Last Change: Fri Mar 27 03:00 PM 2009 J
+# Last Change: Fri Mar 27 04:00 PM 2009 J
 # TODO:
 #   - check how to handle cmd line build options with distutils and use
 #   it in the building process
@@ -41,7 +41,9 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
              maintainer=MAINTAINER,
              maintainer_email=MAINTAINER_EMAIL,
              description=DESCRIPTION,
+             long_description=LONG_DESCRIPTION,
              url=URL,
+             download_url=DOWNLOAD_URL,
              license=LICENSE)
 
     config.set_options(
