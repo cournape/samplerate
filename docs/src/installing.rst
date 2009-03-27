@@ -21,10 +21,8 @@ Releases are available on Pypi:
 
         http://pypi.python.org/pypi/scikits.samplerate/
 
-Samplerate is part of scikits, and its source can be downloaded directly from the
-scikits svn repository::
-
-	svn co http://svn.scipy.org/svn/scikits/trunk/samplerate
+Samplerate is part of scikits, and its source are in a git repository,
+available on `github <http://github.com/cournape/samplerate/tree/master>`_.
 
 Install from binaries
 =====================
