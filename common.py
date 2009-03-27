@@ -26,8 +26,8 @@ CLASSIFIERS = ['Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: GNU General Public License (GPL)'\
-        'Public License (GPL)', 'Topic :: Multimedia :: Sound/Audio',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Topic :: Multimedia :: Sound/Audio',
         'Topic :: Scientific/Engineering']
 
 def build_verstring():
