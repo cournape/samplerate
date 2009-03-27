@@ -1,12 +1,11 @@
 descr   = """\
-Samplerate is a small python package to resample audio data in numpy arrays to
-a different sampling rate: it is basically a wrapper around the Secret Rabbit
-Code from Erik Castro De Lopo (http://www.mega-nerd.com/SRC/).  This package
-only makes sense for audio data, and has high quality converters based on the
+Samplerate is a small python package to do high quality audio resampling for
+data in numpy arrays; IOW, it is a matlab resample replacement.
+
+Samplerate is a wrapper around the Secret Rabbit Code from Erik Castro De Lopo
+(http://www.mega-nerd.com/SRC/), which has high quality converters based on the
 work of J.O Smith from CCRMA (see
 http://ccrma.stanford.edu/~jos/resample/optfir.pdf)
-
-LICENSE: the license of samplerate is the GPL, as is SRC itself.
 """
 
 DISTNAME            = 'scikits.samplerate'
