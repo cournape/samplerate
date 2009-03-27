@@ -67,7 +67,7 @@ if __name__ == "__main__":
         include_package_data = True,
         #package_data = {'scikits.audiolab': data_files},
         test_suite = "tester", # for python setup.py test
-        zip_safe = True, # the package can run out of an .egg file
+        zip_safe = False, # zip egg are a pain
         #FIXME url, download_url, ext_modules
         classifiers = CLASSIFIERS,
     )
