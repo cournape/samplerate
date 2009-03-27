@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Last Change: Tue Mar 24 11:00 PM 2009 J
+# Last Change: Fri Mar 27 04:00 PM 2009 J
 # TODO:
 #   - check how to handle cmd line build options with distutils and use
 #   it in the building process
@@ -32,6 +32,7 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
     write_version(os.path.join("scikits", "samplerate", "version.py"))
     if os.path.exists(os.path.join("docs", "src")):
         write_version(os.path.join("docs", "src", "samplerate_version.py"))
+    write_info(os.path.join("scikits", "samplerate", "info.py"))
 
     from numpy.distutils.misc_util import Configuration
     config = Configuration(None,parent_package,top_path,
@@ -40,7 +41,9 @@ def configuration(parent_package='',top_path=None, package_name=DISTNAME):
              maintainer=MAINTAINER,
              maintainer_email=MAINTAINER_EMAIL,
              description=DESCRIPTION,
+             long_description=LONG_DESCRIPTION,
              url=URL,
+             download_url=DOWNLOAD_URL,
              license=LICENSE)
 
     config.set_options(
@@ -66,7 +69,7 @@ if __name__ == "__main__":
         include_package_data = True,
         #package_data = {'scikits.audiolab': data_files},
         test_suite = "tester", # for python setup.py test
-        zip_safe = True, # the package can run out of an .egg file
+        zip_safe = False, # zip egg are a pain
         #FIXME url, download_url, ext_modules
         classifiers = CLASSIFIERS,
     )

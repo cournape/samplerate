@@ -1,12 +1,11 @@
 descr   = """\
-Samplerate is a small python package to resample audio data in numpy arrays to
-a different sampling rate: it is basically a wrapper around the Secret Rabbit
-Code from Erik Castro De Lopo (http://www.mega-nerd.com/SRC/).  This package
-only makes sense for audio data, and has high quality converters based on the
+Samplerate is a small python package to do high quality audio resampling for
+data in numpy arrays; IOW, it is a matlab resample replacement.
+
+Samplerate is a wrapper around the Secret Rabbit Code from Erik Castro De Lopo
+(http://www.mega-nerd.com/SRC/), which has high quality converters based on the
 work of J.O Smith from CCRMA (see
 http://ccrma.stanford.edu/~jos/resample/optfir.pdf)
-
-LICENSE: the license of samplerate is the GPL, as is SRC itself.
 """
 
 DISTNAME            = 'scikits.samplerate'
@@ -16,7 +15,7 @@ MAINTAINER          = 'David Cournapeau'
 MAINTAINER_EMAIL    = 'david@ar.media.kyoto-u.ac.jp'
 URL                 = 'http://www.ar.media.kyoto-u.ac.jp/members/david/softwares/samplerate'
 LICENSE             = 'GPL'
-DOWNLOAD_URL        = URL
+DOWNLOAD_URL        = 'http://pypi.python.org/pypi/scikits.samplerate'
 
 MAJOR = 0
 MINOR = 3
@@ -27,8 +26,8 @@ CLASSIFIERS = ['Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: GNU Library or Lesser General '\
-        'Public License (LGPL)', 'Topic :: Multimedia :: Sound/Audio',
+        'License :: OSI Approved :: GNU General Public License (GPL)'\
+        'Public License (GPL)', 'Topic :: Multimedia :: Sound/Audio',
         'Topic :: Scientific/Engineering']
 
 def build_verstring():
@@ -45,6 +44,17 @@ def write_version(fname):
     f.writelines("short_version = '%s'\n" % build_verstring())
     f.writelines("dev =%s\n" % DEV)
     f.writelines("version = '%s'\n" % build_fverstring())
+    f.close()
+
+def write_info(fname):
+    f = open(fname, "w")
+    f.writelines("# THIS FILE IS GENERATED FROM THE SETUP.PY. DO NOT EDIT.\n")
+    f.writelines('"""%s"""' % descr)
+    f.writelines("""
+# version of the python module (compatibility -> use
+# scikits.samplerate.version.version instead, to be consistent with numpy)
+from version import short_version as version
+ignore  = False""")
     f.close()
 
 VERSION = build_fverstring()
