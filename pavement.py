@@ -19,7 +19,7 @@ except ImportError, e:
 import paver
 import paver.doctools
 import paver.path
-from paver.easy import options, Bunch, task, needs, dry, sh
+from paver.easy import options, Bunch, task, needs, dry, sh, call_task
 from paver.setuputils import setup
 
 import common
@@ -53,11 +53,12 @@ def mpkg_name():
 VPYEXEC = "install/bin/python"
 
 @task
-@needs('paver.virtual.bootstrap')
 def bootstrap():
     """create virtualenv in ./install"""
-    # XXX: fix the mkdir
-    sh('mkdir -p install')
+    install = paver.path.path('install')
+    if not install.exists():
+        install.mkdir()
+    call_task('paver.virtual.bootstrap')
     sh('cd install; %s bootstrap.py' % sys.executable)
 
 @task
