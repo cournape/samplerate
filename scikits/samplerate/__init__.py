@@ -5,10 +5,13 @@ from info import __doc__
 
 from _samplerate import resample, available_convertors, src_version_str, \
     convertor_description
-import version
+from version import version as _version
+__version__ = _version
 
 __all__ = filter(lambda s:not s.startswith('_'),dir())
 
-# from numpy.testing import NumpyTest
-# test = NumpyTest().test
+from numpy.testing import Tester
+
+test = Tester().test
+bench = Tester().bench
 

@@ -20,6 +20,7 @@ for the libraries can be specified in the site.cfg file, in section
 [samplerate].""")
 
     confgr.add_extension('_samplerate', ['_samplerate.c'], extra_info=sf_config)
+    confgr.add_data_dir('tests')
 
     return confgr
 
