@@ -19,7 +19,7 @@ DOWNLOAD_URL        = 'http://pypi.python.org/pypi/scikits.samplerate'
 
 MAJOR = 0
 MINOR = 3
-MICRO = 1
+MICRO = 2
 DEV = False
 
 CLASSIFIERS = ['Development Status :: 4 - Beta',
