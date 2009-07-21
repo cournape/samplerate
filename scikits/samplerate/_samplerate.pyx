@@ -126,7 +126,7 @@ def resample(cnp.ndarray input, r, type, verbose=False):
                 = _resample_mono(input, nframes, osz, r, _CONVERTOR_TYPE[type])
     else:
         st, ty, input_frames_used, output_frames_gen \
-                = _resample_stereo(input, nframes, osz, r, _CONVERTOR_TYPE[type], nc)
+                = _resample_multi_channels(input, nframes, osz, r, _CONVERTOR_TYPE[type], nc)
     if not st == 0:
         raise RuntimeError('Error while calling wrapper, return status is %d (should be 0)' % st)
 
@@ -157,7 +157,7 @@ cdef _resample_mono(cnp.ndarray input, long niframes, long noframes,
 
     return src_simple(&sr, type, 1), ty, sr.input_frames_used, sr.output_frames_gen
 
-cdef _resample_stereo(cnp.ndarray input, long niframes, long noframes,
+cdef _resample_multi_channels(cnp.ndarray input, long niframes, long noframes,
         double r, int type, int nc):
     cdef cnp.ndarray[cnp.float32_t, ndim=2] ty
     cdef SRC_DATA sr
@@ -170,4 +170,4 @@ cdef _resample_stereo(cnp.ndarray input, long niframes, long noframes,
     sr.output_frames = noframes
     sr.src_ratio = r
 
-    return src_simple(&sr, type, 1), ty, sr.input_frames_used, sr.output_frames_gen
+    return src_simple(&sr, type, nc), ty, sr.input_frames_used, sr.output_frames_gen
