@@ -6,7 +6,7 @@ for high quality sampling rate convertion from audio data in numpy arrays
 To use/install this package, you need:
     - a python interpreter
     - a recent version of numpy (>=1.2) (http://www.scipy.org)
-    - Source Rabbit Code from Erik de Castro De Lopo
+    - Source Rabbit Code from Erik de Castro Lopo
       (http://www.mega-nerd.com/SRC/)
 
 To install, a simple python setup.py install should do it. If the Source Rabbit
