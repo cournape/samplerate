@@ -27,6 +27,16 @@ import common
 PDF_DESTDIR = paver.path.path('docs') / 'pdf'
 HTML_DESTDIR = paver.path.path('docs') / 'html'
 
+# Wine config for win32 builds
+WINE_SITE_CFG = """\
+[samplerate]
+library_dirs = /home/david/.wine/drive_c/local/lib
+include_dirs = /home/david/.wine/drive_c/local/include
+"""
+WINE_PY25 = "/home/david/.wine/drive_c/Python25/python.exe"
+WINE_PY26 = "/home/david/.wine/drive_c/Python26/python.exe"
+WINE_PYS = {'2.6' : WINE_PY26, '2.5': WINE_PY25}
+
 setup(name=common.DISTNAME,
         namespace_packages=['scikits'],
         packages=setuptools.find_packages(),
@@ -116,6 +126,39 @@ def dmg():
 #    setuputils.find_package_data("scikits/samplerate",
 #                                 package="scikits/samplerate",
 #                                 only_in_packages=False)
+
+@task
+def bdist_wininst_26():
+    _bdist_wininst(pyver='2.6')
+
+@task
+def bdist_wininst_25():
+    _bdist_wininst(pyver='2.5')
+
+@task
+@needs('bdist_wininst_25', 'bdist_wininst_26')
+def bdist_wininst():
+    pass
+
+@task
+@needs('clean', 'bdist_wininst')
+def winbin():
+    pass
+
+def _bdist_wininst(pyver):
+    site = paver.path.path('site.cfg')
+    exists = site.exists()
+    try:
+        if exists:
+            site.move('site.cfg.bak')
+        a = open(str(site), 'w')
+        a.writelines(WINE_SITE_CFG)
+        a.close()
+        sh('%s setup.py build -c mingw32 bdist_wininst' % WINE_PYS[pyver])
+    finally:
+        site.remove()
+        if exists:
+            paver.path.path('site.cfg.bak').move(site)
 
 if paver.doctools.has_sphinx:
     def _latex_paths():
