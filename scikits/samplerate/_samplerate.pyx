@@ -4,8 +4,8 @@ import warnings
 import copy
 
 cimport numpy as cnp
-cimport stdlib
-from samplerate cimport *
+from libc.string cimport strlen
+from .samplerate cimport *
 
 cdef extern from *:
     ctypedef char* const_char_ptr "const char*"
@@ -23,7 +23,7 @@ cdef extern from "samplerate.h":
     ctypedef SRC_DATA SRC_DATA
 
 cdef extern from "Python.h":
-    object PyString_FromStringAndSize(char *v, int len)
+    object PyUnicode_FromStringAndSize(char *v, int len)
 
 _CONVERTOR_TYPE = {
         'sinc_best'         : SRC_SINC_BEST_QUALITY,
@@ -41,7 +41,7 @@ def src_version_str():
     cdef const_char_ptr b
 
     b = src_get_version()
-    return PyString_FromStringAndSize(b, stdlib.strlen(b))
+    return PyUnicode_FromStringAndSize(b, strlen(b))
 
 def available_convertors():
     """
@@ -69,7 +69,7 @@ def convertor_description(type):
         raise ValueError("convert type %s unrecognized" % type)
 
     b = src_get_description(_CONVERTOR_TYPE[type])
-    return PyString_FromStringAndSize(b, stdlib.strlen(b))
+    return PyUnicode_FromStringAndSize(b, strlen(b))
 
 def resample(cnp.ndarray input, r, type, verbose=False):
     """
@@ -138,7 +138,7 @@ def resample(cnp.ndarray input, r, type, verbose=False):
         if not output_frames_gen == osz:
             info += "\n\toutput has been resized from %ld to %ld" % \
                     (osz, output_frames_gen)
-            print info
+            print(info)
 
     return ty
 

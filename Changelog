@@ -1,6 +1,10 @@
+Wed, 22 Jul 2009 16:32:34 +0900
+	* Fix Erik's name everywhere
+	* Release 0.3.3
+
 Tue, 21 Jul 2009 19:58:34 +0900
 	* Fix nasty bug introduced in 0.3.1 with multi-channels data
-	* Release 0.4.0
+	* Release 0.3.2
 
 Fri, 27 Mar 2009 16:05:40 +0900
 	* Make sure info.py version is the same as the version module

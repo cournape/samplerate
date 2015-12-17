@@ -18,8 +18,8 @@ LICENSE             = 'GPL'
 DOWNLOAD_URL        = 'http://pypi.python.org/pypi/scikits.samplerate'
 
 MAJOR = 0
-MINOR = 4
-MICRO = 0
+MINOR = 3
+MICRO = 4
 DEV = True
 
 CLASSIFIERS = ['Development Status :: 4 - Beta',
@@ -53,7 +53,7 @@ def write_info(fname):
     f.writelines("""
 # version of the python module (compatibility -> use
 # scikits.samplerate.version.version instead, to be consistent with numpy)
-from version import short_version as version
+from .version import short_version as version
 ignore  = False""")
     f.close()
 
